@@ -1,15 +1,16 @@
-%bcond_without	tests
 #
+# Conditional build:
+%bcond_without	tests		# build without tests
+
 Summary:	C library for decrypting and parsing Yubikey One-time passwords
 Name:		libyubikey
 Version:	1.13
 Release:	1
 License:	BSD
-Group:		Development/Libraries
 Group:		Libraries
-URL:		http://opensource.yubico.com/yubico-c
 Source0:	http://opensource.yubico.com/yubico-c/releases/%{name}-%{version}.tar.gz
 # Source0-md5:	6e84fc1914ab5b609319945c18d45835
+URL:		http://opensource.yubico.com/yubico-c
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -36,22 +37,20 @@ that use libyubikey.
 %{__make}
 
 %if %{with tests}
-export LD_LIBRARY_PATH=$RPM_BUILD_DIR/%{name}-%{version}/.libs
 %{__make} check
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 %{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT \
-	INSTALL="%{__install} -p"
+	INSTALL="%{__install} -p" \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
-%{__rm} -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
